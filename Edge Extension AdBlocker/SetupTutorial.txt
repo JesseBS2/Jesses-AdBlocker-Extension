@@ -1,0 +1,13 @@
+1. open Microsoft Edge
+
+2. in the top right corner select the 3 dots
+
+3. find "Extensions" in the drop down menu and click it
+
+4. click "Manage Extensions"
+
+5. make sure the "Devolper mode" switch on the left side turned on
+
+6. click the "Load unpacked" button and locate the folder you downloaded the extension to
+
+7. select "Edge Extension AdBlocker" folder

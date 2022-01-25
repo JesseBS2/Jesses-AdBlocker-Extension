@@ -1,0 +1,11 @@
+1. open Google Chrome
+
+2. in the address bar type: chrome://extensions
+
+3. in the top right of that page you will see a "Developer Mode" toggle. Turn it on.
+
+4. select the new option "Load unpacked"
+
+5. navigate to the unpacked folder in your computer
+
+6. it should be loaded. Simply refresh the page you had open. 
