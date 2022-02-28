@@ -1,6 +1,6 @@
 {
   "name": "JS2 Ad-blocker",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "manifest_version": 2,
   "description": "Jesse's Ad Blocker for Microsoft Edge with over 50 blocked ad services!",
   "permissions": [

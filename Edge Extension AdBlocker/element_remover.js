@@ -1,20 +1,11 @@
-/* This file removes elements that aren't referenced from another website but are still dedicated ad sections */
-
-
-/* 
-    Some websites have a download button that links to adfocus
-    adfocus shows a full-screen ad that is usually a fake download button and a virus
-
-*/
-
 change_href(); 
 
 
 
- /* Known Ad Locations */
+ /* Hardcoded ad-block locations */
 
 setTimeout(() => {
-     // Google
+    // Google
     if (window.location.href.startsWith("https://www.google.com/search")) {
         tryID("tads");
         tryID("bottomads");
@@ -27,13 +18,16 @@ setTimeout(() => {
     if (window.location.hostname.includes("youtube.")) {
         tryID("player-ads");
         tryID("masthead-ad");
+
         tryTag("ytd-promoted-sparkles-text-search-renderer");
         tryTag("ytd-promoted-sparkles-web-renderer");
 
+        tryTag("ytd-display-ad-renderer");
     }
 
     // Curseforge
     if (window.location.hostname.includes("curseforge.")) {
+        tryID("cdm-zone-03");
         tryID("lngtd_vid_container");
     }
 
@@ -46,21 +40,21 @@ setTimeout(() => {
     if (window.location.hostname.includes("amazon.")) {
         tryID("ape_Detail_desktop-detail-ilm_desktop_placement");
         tryClass("_bXVsd_container_GMk6b");
-        tryClass("AdHolder");
-        tryClass("sp_hqp_shared_adLink");
-        tryID("sp_hqp_shared");
-        tryID("ape_Detail_ams-detail-right-v2_desktop_placement");
-        tryID("hero-quick-promo");
-        tryID("ape_Search_auto-bottom-advertising-0_portal-batch-fast-btf-loom_placement");
-        tryID("ape_Search_auto-bottom-advertising-0_portal-batch-fast-btf-loom_placement_Feedback");
+        tryClass("AdHolder")
+        tryClass("sp_hqp_shared_adLink")
+        tryID("sp_hqp_shared")
+        tryID("ape_Detail_ams-detail-right-v2_desktop_placement")
+        tryID("hero-quick-promo")
+        tryID("ape_Search_auto-bottom-advertising-0_portal-batch-fast-btf-loom_placement")
+        tryID("ape_Search_auto-bottom-advertising-0_portal-batch-fast-btf-loom_placement_Feedback")
 
     }
 
-}, 350);
+}, 100);
 
 setTimeout(() => {
     tryCommon("minecraftforge", "amazon", ["imgur", "UploadSpinner-contentWrapper"], ["youtube", "masthead-skeleton-icon"], ["youtube","ytp-load-progress"]);
-}, 350 + 25);
+}, 125);
 
 
 function change_href() {
@@ -69,10 +63,13 @@ function change_href() {
 
         if (element.href.includes("adfoc.us")) {
             element.href = element.href.split("&url=")[1];
-            console.log("[JS2 Ad-blocker]","Changed adfoc.us link.")
+            console.log("[JS2 Ad-blocker]", "Changed adfoc.us link.");
         }
     }
 }
+
+
+
 
 
 
@@ -87,24 +84,30 @@ function tryCommon(...arguments) {
             wrapper_list.forEach(wrapper => {
                 let dontdo = false
                 arguments.forEach(exception => {
-                    if (window.location.hostname.includes(exception[0] + ".") && div.id === exception[1] || window.location.hostname.includes(exception + ".")) {
+                    if (window.location.hostname.includes(exception[0] + ".") && div.id === exception[1]) {
                         dontdo = true;
+                    } else if (window.location.hostname.includes(exception + ".")) {
+                        dontdo = "complex"
                     }
                 })
 
                 if (dontdo == true) {
-                    return console.log("[JS2 Ad-blocker]","Found Exception");
+                    return console.log("[JS2 Ad-blocker]", "Found Exception");
+                } else if (dontdo == "complex") {
+                    return;
                 }
 
                 div.id = div.id.toLowerCase()
 
                 if (div.id.includes(wrapper + title + wrapper) || div.id.includes(title + wrapper) || div.id.includes(wrapper + title) || div.id.includes(title)) {
-                    if (title == "ad" || title == "cdm") {
+                    if (title == "ad" || title == "ads" || title == "cdm") {
                         if (div.id != title && div.id.includes(wrapper + title + wrapper) === false) {
-                            if (div.id.indexOf(wrapper + title) == -1 || div.id.indexOf(title + wrapper) == -1 || div.id.includes(wrapper + title) && div.id.indexOf(wrapper + title) == div.id.length - (wrapper + title).length - 1 || div.id.includes(title + wrapper) && div.id.indexOf(title + wrapper) == 0) {
+                            if (div.id.indexOf(wrapper + title) > 0 || div.id.indexOf(title + wrapper) == -1 || div.id.indexOf(wrapper + title) < (div.id.length - (wrapper + title).length - 1)) {
                                 return;
                             }
                         }
+                    } else if (title.includes("skip") && !title.includes("unskippable")) {
+                        return;
                     }
 
                     div.style.display = "none";
@@ -113,13 +116,17 @@ function tryCommon(...arguments) {
                     div.classList.forEach(item => {
                         var dontdo = false;
                         arguments.forEach(exception => {
-                            if (window.location.hostname.includes(exception[0] + ".") && item === exception[1] || window.location.hostname.includes(exception + ".")) {                       
+                            if (window.location.hostname.includes(exception[0] + ".") && item === exception[1]) {
                                 dontdo = true;
+                            } else if (window.location.hostname.includes(exception + ".")) {
+                                dontdo = "complex"
                             }
                         })
 
                         if (dontdo == true) {
                             return console.log("[JS2 Ad-blocker]", "Found Exception");
+                        } else if (dontdo == "complex") {
+                            return;
                         }
 
                         item = item.toLowerCase()
@@ -127,10 +134,13 @@ function tryCommon(...arguments) {
                             if (title == "ad" || title == "cdm") {
                                 if (item != title && item.includes(wrapper + title + wrapper) === false) {
                                     if (item.indexOf(wrapper + title) == -1 || item.indexOf(title + wrapper) == -1 || item.includes(wrapper + title) && item.indexOf(wrapper + title) == item.length - (wrapper + title).length - 1 || item.includes(title + wrapper) && item.indexOf(title + wrapper) == 0) {
-                                        return;
+                                        return
                                     }
                                 }
+                            } else if (title.includes("skip") && !title.includes("unskippable")) {
+                                return;
                             }
+
                             div.style.display = "none";
                             console.log("[JS2 Ad-blocker]","Detected possible ad, hid element class: ." + item);
                         }
@@ -140,7 +150,6 @@ function tryCommon(...arguments) {
         });
     }
 }
-
 
 function tryID(ad) {
     try {

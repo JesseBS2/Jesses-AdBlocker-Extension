@@ -48,6 +48,12 @@ adServicesArr = [
     "*://*.anyclip.com/*",
     "*://*.directom.com/*",
     "*://*.go2speed.org/*",
+    "*://*.akamaihd.net/*",
+    "*://*.moatads.com/*",
+    "*://*.infolinks.com/*",
+    "*://*.primis.tech/*",
+    "*://*.ggpht.com/*",
+    "*://*.snigel.com/*",
 
     "*://*.gstatic.com/*/promos/*"
 ]
