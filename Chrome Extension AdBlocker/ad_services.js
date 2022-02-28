@@ -49,15 +49,21 @@ adServicesArr = [
     "*://*.anyclip.com/*",
     "*://*.directom.com/*",
     "*://*.go2speed.org/*",
-
+    "*://*.akamaihd.net/*",
+    "*://*.moatads.com/*",
+    "*://*.infolinks.com/*",
+    "*://*.primis.tech/*",
+    "*://*.ggpht.com/*",
+    "*://*.snigel.com/*",
 
 
     /* Specific paths that the entire site shouldn't be blocked but subdomains should */
     "*://*.gstatic.com/*/promos/*"
 ]
 
+// pre-block ad services before loading
 chrome.webRequest.onBeforeRequest.addListener(
     function (details) { return { cancel: true } },
     { urls: adServicesArr },
     ["blocking"]
-)
+);

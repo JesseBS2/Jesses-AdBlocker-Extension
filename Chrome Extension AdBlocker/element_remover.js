@@ -11,7 +11,7 @@ change_href();
 
 
 
- /* Known Ad Locations */
+ /* Hardcoded ad-block locations */
 
 setTimeout(() => {
      // Google
@@ -34,6 +34,9 @@ setTimeout(() => {
         // ads above the search feed when looking for a video
         tryTag("ytd-promoted-sparkles-text-search-renderer");
         tryTag("ytd-promoted-sparkles-web-renderer");
+
+        // more custom ad tags
+        tryTag("ytd-display-ad-renderer");
     }
 
     // Curseforge
@@ -65,7 +68,7 @@ setTimeout(() => {
 
     }
 
-}, 500);
+}, 100);
 
 setTimeout(() => {
     tryCommon("minecraftforge", "amazon", ["imgur", "UploadSpinner-contentWrapper"], ["youtube", "masthead-skeleton-icon"], ["youtube","ytp-load-progress"]);
@@ -74,7 +77,7 @@ setTimeout(() => {
      * The download page for Forge is wrapped in one big div labeled "promoted-wrapper" which means the entire page his hidden
      * Amazon has too many complex ids and classes that can hide non-ad elements
      * */
-}, 500 + 50);
+}, 125);
 
 
 // dodge adfocus webpage
@@ -82,12 +85,15 @@ function change_href() {
     for (var links = 0; links < document.getElementsByTagName("a").length; links++) {
         let element = document.getElementsByTagName("a")[links];
 
-        if (element.href.includes("adfoc.us")) {
+        if (element.href.includes("adfoc.us")) {    // full screen ads? no thank you
             element.href = element.href.split("&url=")[1];
-            console.log("[JS2 Ad-blocker]","Changed adfoc.us link.")
+            console.log("[JS2 Ad-blocker]", "Changed adfoc.us link.");
         }
     }
 }
+
+
+
 
 
 
@@ -103,25 +109,31 @@ function tryCommon(...arguments) {
             wrapper_list.forEach(wrapper => { // loop through things that those might have surrounding them as seperators
                 let dontdo = false
                 arguments.forEach(exception => {
-                    if (window.location.hostname.includes(exception[0] + ".") && div.id === exception[1] || window.location.hostname.includes(exception + ".")) {
+                    if (window.location.hostname.includes(exception[0] + ".") && div.id === exception[1]) {
                         dontdo = true;
+                    } else if (window.location.hostname.includes(exception + ".")) {
+                        dontdo = "complex"
                     }
                 })
 
                 if (dontdo == true) {
-                    return console.log("[JS2 Ad-blocker]","Found Exception");
+                    return console.log("[JS2 Ad-blocker]", "Found Exception");
+                } else if (dontdo == "complex") {
+                    return; // complex dontdos are blocking the whole website which would flood the console with exceptions
                 }
 
                 div.id = div.id.toLowerCase()
 
                 if (div.id.includes(wrapper + title + wrapper) || div.id.includes(title + wrapper) || div.id.includes(wrapper + title) || div.id.includes(title)) {
                     /* some common ad detectors will be found in words or abbreviations, this insures a more specific detection for these small ad labels */
-                    if (title == "ad" || title == "cdm") {
+                    if (title == "ad" || title == "ads" || title == "cdm") {
                         if (div.id != title && div.id.includes(wrapper + title + wrapper) === false) {
-                            if (div.id.indexOf(wrapper + title) == -1 || div.id.indexOf(title + wrapper) == -1 || div.id.includes(wrapper + title) && div.id.indexOf(wrapper + title) == div.id.length - (wrapper + title).length - 1 || div.id.includes(title + wrapper) && div.id.indexOf(title + wrapper) == 0) {
+                            if (div.id.indexOf(wrapper + title) > 0 || div.id.indexOf(title + wrapper) == -1 || div.id.indexOf(wrapper + title) < (div.id.length - (wrapper + title).length - 1)) {
                                 return; /*console.log("[JS2 Ad-blocker]","Canceled #" + div.id);*/
                             }
                         }
+                    } else if (title.includes("skip") && !title.includes("unskippable")) {
+                        return; //is an ad skipper like a button
                     }
 
                     div.style.display = "none";
@@ -131,13 +143,17 @@ function tryCommon(...arguments) {
                     div.classList.forEach(item => {
                         var dontdo = false;
                         arguments.forEach(exception => {
-                            if (window.location.hostname.includes(exception[0] + ".") && item === exception[1] || window.location.hostname.includes(exception + ".")) {                       
+                            if (window.location.hostname.includes(exception[0] + ".") && item === exception[1]) {
                                 dontdo = true;
+                            } else if (window.location.hostname.includes(exception + ".")) {
+                                dontdo = "complex"
                             }
                         })
 
                         if (dontdo == true) {
                             return console.log("[JS2 Ad-blocker]", "Found Exception");
+                        } else if (dontdo == "complex") {
+                            return;
                         }
 
                         item = item.toLowerCase()
@@ -148,7 +164,10 @@ function tryCommon(...arguments) {
                                         return /*console.log("[JS2 Ad-blocker]","Canceled ." + item);*/
                                     }
                                 }
+                            } else if (title.includes("skip") && !title.includes("unskippable")) {
+                                return; //is an ad skipper like a button
                             }
+
                             div.style.display = "none";
                             //div.classList += " BlockedByJesseLOL";
                             console.log("[JS2 Ad-blocker]","Detected possible ad, hid element class: ." + item);
